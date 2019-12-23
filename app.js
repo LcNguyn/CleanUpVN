@@ -58,9 +58,10 @@ const express           =     require('express')
 
 main.use(express.static(path.join(__dirname,"/build")));
 const downloadsFolder = require('downloads-folder');
-const CLIENT_ID = OAuth2Data.web.client_id;
+const CLIENT_ID     = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
-const REDIRECT_URL = OAuth2Data.web.redirect_uris
+const REDIRECT_URL  = OAuth2Data.web.redirect_uris;
+const fileRoutes    = require("./routes/file-upload.js")
 
 main.use(bodyParser.json());
 main.use(bodyParser.urlencoded({
@@ -893,6 +894,7 @@ var Users = require('./routes/Users')
 
 
 main.use('/users', Users)
+main.use('/image/', fileRoutes)
 
 main.get("/*", (req,res) => {
     res.sendFile(path.join(__dirname,"build/index.html"))
