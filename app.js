@@ -62,6 +62,7 @@ const CLIENT_ID     = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDIRECT_URL  = OAuth2Data.web.redirect_uris;
 const fileRoutes    = require("./routes/file-upload.js")
+const multiFileRoutes = require( './routes/multi-file-upload.js' );
 
 main.use(bodyParser.json());
 main.use(bodyParser.urlencoded({
@@ -199,13 +200,16 @@ main.post('/cleansite', function (req, res) {
         var cs_start_time = req.param('cs_start_time','unknown')
         var cs_end_time = req.param('cs_end_time','unknown')
         var cs_owner = req.param('cs_owner',null)
+        var cs_owner_name = req.param('cs_owner_name',null)
         // var cs_owner = 'test_acc1@gmail.com'
         var cs_social_owner = req.param('cs_social_owner',null)
+        var cs_social_owner_name = req.param('cs_social_owner',null)
+
         // var cs_social_owner = 'unknown'
 
         var cs_amount_collected = req.param('cs_amount_collected','unknown')
-        var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_description, cs_lat, cs_long, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_amount_collected)" +
-            " VALUES ('" + clean_site_id + "', '" + cs_name + "', '" + cs_description + "', '" + cs_lat +  "', '" + cs_long + "', '" + cs_address + "', '" + cs_start_time + "', '" + cs_end_time + "', " + cs_owner + ", " + cs_social_owner + ", '" +  cs_amount_collected +"')";
+        var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_description, cs_lat, cs_long, cs_address, cs_start_time, cs_end_time, cs_owner, cs_owner_name, cs_social_owner, cs_social_owner_name, cs_amount_collected)" +
+            " VALUES ('" + clean_site_id + "', '" + cs_name + "', '" + cs_description + "', '" + cs_lat +  "', '" + cs_long + "', '" + cs_address + "', '" + cs_start_time + "', '" + cs_end_time + "', " + cs_owner + ", '" + cs_owner_name + "', " + cs_social_owner + ", '" + cs_social_owner_name + "', '" + cs_amount_collected +"')";
         connection.query(insertQuery, function (err, result) {
             connection.release();
             if (err) throw err;
@@ -895,6 +899,8 @@ var Users = require('./routes/Users')
 
 main.use('/users', Users)
 main.use('/image/', fileRoutes)
+main.use( '/multiimage/', multiFileRoutes );
+
 
 main.get("/*", (req,res) => {
     res.sendFile(path.join(__dirname,"build/index.html"))
