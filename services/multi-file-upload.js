@@ -1,6 +1,8 @@
 const aws = require('aws-sdk')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
+const path = require( 'path' );
+const url = require('url');
 
 const config = require('../configuration/config')
 
@@ -40,6 +42,6 @@ const uploadsBusinessGallery = multer({
     fileFilter: function( req, file, cb ){
         checkFileType( file, cb );
     }
-}).array( 'galleryImage', 4 );
+}).array( 'galleryImage', 100 );
 
 module.exports = uploadsBusinessGallery;

@@ -3,7 +3,7 @@ const muli_image_router = express.Router();
 
 const uploadsBusinessGallery = require('../services/multi-file-upload.js');
 
-const multiUpload = uploadsBusinessGallery.single('image2');
+// const multiUpload = uploadsBusinessGallery.single('image2');
 
 muli_image_router.post('/multiple-file-upload', ( req, res ) => {
     uploadsBusinessGallery( req, res, ( error ) => {
