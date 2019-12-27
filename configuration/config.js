@@ -6,7 +6,7 @@ module.exports = {
 
   facebook_api_key: "483735179161974",
   facebook_api_secret: "6d85c1f4acae9b2af0b31419440c0700",
-  callback_url: "http://cleanupvn.ap-southeast-1.elasticbeanstalk.com/auth/facebook/callback",
+  callback_url: "http://localhost:8081/sociallogin/auth/facebook/callback",
   use_database: true,
   host: "localhost",
   username: "root",
