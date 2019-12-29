@@ -22,23 +22,58 @@ cleansite.post('/', function (req, res) {
         }
         var clean_site_id =  generate()
         var cs_name = req.param('cs_name','unknown')
+        var cs_logo = req.param('cs_logo','unknown')
         var cs_description  =req.param('cs_description','unknown')
         var cs_lat = req.param('cs_lat','unknown')
         var cs_long = req.param('cs_long','unknown')
+        var cs_address_name = req.param('cs_address_name','unknown')
         var cs_address = req.param('cs_address','unknown')
         var cs_start_time = req.param('cs_start_time','unknown')
         var cs_end_time = req.param('cs_end_time','unknown')
         var cs_owner = req.param('cs_owner',null)
+        var cs_social_owner = req.param('cs_social_owner',null)
         var cs_owner_name = req.param('cs_owner_name',null)
         // var cs_owner = 'test_acc1@gmail.com'
-        var cs_social_owner = req.param('cs_social_owner',null)
-        var cs_social_owner_name = req.param('cs_social_owner',null)
-
-        // var cs_social_owner = 'unknown'
+        var cs_agenda = req.param('cs_agenda','unknown')
+        var cs_inex = req.param('cs_inex',null)
+        var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
 
         var cs_amount_collected = req.param('cs_amount_collected','unknown')
-        var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_description, cs_lat, cs_long, cs_address, cs_start_time, cs_end_time, cs_owner, cs_owner_name, cs_social_owner, cs_social_owner_name, cs_amount_collected)" +
-            " VALUES ('" + clean_site_id + "', '" + cs_name + "', '" + cs_description + "', '" + cs_lat +  "', '" + cs_long + "', '" + cs_address + "', '" + cs_start_time + "', '" + cs_end_time + "', " + cs_owner + ", '" + cs_owner_name + "', " + cs_social_owner + ", '" + cs_social_owner_name + "', '" + cs_amount_collected +"')";
+        var cs_organic = req.param('cs_organic','unknown')
+        var cs_recy = req.param('cs_recy','unknown')
+        var cs_non_recy = req.param('cs_non_recy','unknown')
+        var cs_rq_tong = req.param('cs_agenda','unknown')
+        var cs_rq_bags = req.param('cs_agenda','unknown')
+        var cs_rq_shirt = req.param('cs_agenda','unknown')
+        var cs_rq_set = req.param('cs_agenda','unknown')
+
+        var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_logo, cs_description, cs_lat, cs_long," +
+            " cs_address_name, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_owner_name, cs_agenda, cs_inex," +
+            " cs_ptcp_no,  cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_rq_tong, cs_rq_bags, cs_rq_shirt, cs_rq_set)" +
+            " VALUES ('" + clean_site_id + "', '"
+            + cs_name + "', '"
+            + cs_logo + "', '"
+            + cs_description + "', '"
+            + cs_lat +  "', '"
+            + cs_long + "', '"
+            + cs_address_name + "', '"
+            + cs_address + "', '"
+            + cs_start_time + "', '"
+            + cs_end_time + "', "
+            + cs_owner + ", "
+            + cs_social_owner + ", '"
+            + cs_owner_name + "', '"
+            + cs_agenda + "', "
+            + cs_inex + ", '"
+            + cs_ptcp_no +  "', '"
+            + cs_amount_collected + "', '"
+            + cs_organic +  "', '"
+            + cs_recy +  "', '"
+            + cs_non_recy +  "', '"
+            + cs_rq_tong +  "', '"
+            + cs_rq_bags +  "', '"
+            + cs_rq_shirt +  "', '"
+            + cs_rq_set +"')";
         connection.query(insertQuery, function (err, result) {
             connection.release();
             if (err) throw err;
@@ -79,10 +114,6 @@ cleansite.get('/all/amount', function (req, res) {
             res.send(result)
         });
     });
-});
-
-cleansite.get('/bye', function (req, res) {
-    return res.send({error: true, message: 'bye'})
 });
 
 cleansite.get('/countvolunteer', function (req, res) {
@@ -148,14 +179,47 @@ cleansite.put('/:id' ,function (req, res) {
         };
         var id = req.params.id
         var cs_name = req.param('cs_name','unknown')
-        var cs_description  =req.param('cs_description','unknown')
+        var cs_description  = req.param('cs_description','unknown')
         var cs_lat = req.param('cs_lat','unknown')
         var cs_long = req.param('cs_long','unknown')
+        var cs_address_name = req.param('cs_address_name','unknown')
         var cs_address = req.param('cs_address','unknown')
         var cs_start_time = req.param('cs_start_time','unknown')
         var cs_end_time = req.param('cs_end_time','unknown')
+        var cs_agenda = req.param('cs_agenda','unknown')
+        var cs_inex = req.param('cs_inex',null)
+        var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
+
         var cs_amount_collected = req.param('cs_amount_collected','unknown')
-        connection.query("UPDATE clean_site SET cs_name = '" + cs_name + "', cs_description = '" + cs_description + "', cs_lat = '" + cs_lat + "', cs_long = '" + cs_long + "', cs_address = '" + cs_address + "', cs_start_time = '" + cs_start_time + "', cs_end_time = '" + cs_end_time + "', cs_amount_collected = '" + cs_amount_collected + "' WHERE clean_site_id = '" + id + "'", (error, results, fields) => {
+
+        var cs_organic = req.param('cs_organic','unknown')
+        var cs_recy = req.param('cs_recy','unknown')
+        var cs_non_recy = req.param('cs_non_recy','unknown')
+        var cs_rq_tong = req.param('cs_agenda','unknown')
+        var cs_rq_bags = req.param('cs_agenda','unknown')
+        var cs_rq_shirt = req.param('cs_agenda','unknown')
+        var cs_rq_set = req.param('cs_agenda','unknown')
+
+        connection.query("UPDATE clean_site SET cs_name = '" + cs_name
+            + "', cs_description = '" + cs_description
+            + "', cs_lat = '" + cs_lat
+            + "', cs_long = '" + cs_long
+            + "', cs_address_name = '" + cs_address_name
+            + "', cs_address = '" + cs_address
+            + "', cs_start_time = '" + cs_start_time
+            + "', cs_end_time = '" + cs_end_time
+            + "', cs_agenda = '" + cs_agenda
+            + "', cs_inex = " + cs_inex
+            + " , cs_ptcp_no = '" + cs_ptcp_no
+            + "', cs_amount_collected = '" + cs_amount_collected
+            + "', cs_ptcp_no = '" + cs_organic
+            + "', cs_ptcp_no = '" + cs_recy
+            + "', cs_ptcp_no = '" + cs_non_recy
+            + "', cs_rq_tong = '" + cs_rq_tong
+            + "', cs_rq_bags = '" + cs_rq_bags
+            + "', cs_rq_shirt = '" + cs_rq_shirt
+            + "', cs_rq_set = '" + cs_rq_set
+            + "' WHERE clean_site_id = '" + id + "'", (error, results, fields) => {
             connection.release();
             if (error)
                 return console.error(error.message);

@@ -4,12 +4,10 @@ const express           =   require('express')
     , cors              =   require('cors')
     , passport          =   require('passport')
     , bodyParser        =   require('body-parser')
-    , mysql             =   require('mysql')
     , path              =   require('path')
     , main              =   express()
     , Users             =   require('./routes/Users')
-    , fileRoutes        =   require("./routes/file-upload.js")
-    , multiFileRoutes   =   require( './routes/multi-file-upload.js' )
+    , photo_upload      =   require( './routes/photo_upload.js' )
     , cleansite         =   require( './routes/cleansite.js' )
     , account           =   require( './routes/account.js' )
     , volunteer         =   require( './routes/volunteer.js' )
@@ -22,7 +20,6 @@ main.use(bodyParser.urlencoded({
     extended: false
 }));
 main.use(cors())
-
 main.set('views', __dirname + '/views');
 main.set('view engine', 'ejs');
 main.use(cookieParser());
@@ -40,14 +37,6 @@ main.listen(port, 'localhost', function () {
 });
 module.exports = main;
 
-var pool        = mysql.createPool({
-    connectionLimit : 10, // default = 10
-    host            : 'localhost',
-    user            : 'root',
-    password        : 'Wilny28121999',
-    database        : 'sakila'
-});
-
 // var pool = mysql.createPool({
 //     connectionLimit: 10, // default = 10
 //     host: process.env.RDS_HOSTNAME,
@@ -60,8 +49,7 @@ var pool        = mysql.createPool({
 
 main.use('/sociallogin', social_login)
 main.use('/users', Users)
-main.use('/image/', fileRoutes)
-main.use( '/multiimage/', multiFileRoutes );
+main.use( '/photo/', photo_upload );
 main.use('/cleansite/', cleansite);
 main.use('/account/', account);
 main.use('/volunteer/', volunteer);
