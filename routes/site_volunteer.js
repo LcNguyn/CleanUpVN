@@ -9,11 +9,11 @@ site_volunteer.post('/', function (req, res) {
         var sv_site = req.param('sv_site','unknown')
         var sv_volunteer  = req.param('sv_volunteer','unknown')
         var sv_cleanuptools  =req.param('sv_cleanuptools',false)
-        var sv_shirt  =req.param('sv_shirt',false)
+        var sv_shirt  =req.param('sv_shirt','unknown')
 
 
         var insertQuery = "INSERT INTO site_vlt (sv_site, sv_volunteer, sv_cleanuptools, sv_shirt)" +
-            " VALUES ('" + sv_site + "', '"  + sv_volunteer + "', " + sv_cleanuptools + ", " + sv_shirt + ")";
+            " VALUES ('" + sv_site + "', '"  + sv_volunteer + "', " + sv_cleanuptools + ", '" + sv_shirt + "')";
         connection.query(insertQuery, function (err, result) {
             connection.query("SELECT * FROM volunteer WHERE vlt_email = '" + sv_volunteer + "'", function (err, vlt_result, fields) {
                 connection.query("SELECT * FROM clean_site WHERE clean_site_id = '" + sv_site + "'", function (err, site_result, fields) {

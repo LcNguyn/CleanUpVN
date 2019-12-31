@@ -35,7 +35,7 @@ cleansite.post('/', function (req, res) {
         var cs_owner_name = req.param('cs_owner_name',null)
         // var cs_owner = 'test_acc1@gmail.com'
         var cs_agenda = req.param('cs_agenda','unknown')
-        var cs_inex = req.param('cs_inex',null)
+        var cs_inex = req.param('cs_inex','unknown')
         var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
 
         var cs_amount_collected = req.param('cs_amount_collected','unknown')
@@ -63,8 +63,8 @@ cleansite.post('/', function (req, res) {
             + cs_owner + ", "
             + cs_social_owner + ", '"
             + cs_owner_name + "', '"
-            + cs_agenda + "', "
-            + cs_inex + ", '"
+            + cs_agenda + "', '"
+            + cs_inex + "', '"
             + cs_ptcp_no +  "', '"
             + cs_amount_collected + "', '"
             + cs_organic +  "', '"
@@ -195,10 +195,10 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_organic = req.param('cs_organic','unknown')
         var cs_recy = req.param('cs_recy','unknown')
         var cs_non_recy = req.param('cs_non_recy','unknown')
-        var cs_rq_tong = req.param('cs_agenda','unknown')
-        var cs_rq_bags = req.param('cs_agenda','unknown')
-        var cs_rq_shirt = req.param('cs_agenda','unknown')
-        var cs_rq_set = req.param('cs_agenda','unknown')
+        var cs_rq_tong = req.param('cs_rq_tong','unknown')
+        var cs_rq_bags = req.param('cs_rq_bags','unknown')
+        var cs_rq_shirt = req.param('cs_rq_shirt','unknown')
+        var cs_rq_set = req.param('cs_rq_set','unknown')
 
         connection.query("UPDATE clean_site SET cs_name = '" + cs_name
             + "', cs_description = '" + cs_description
@@ -209,12 +209,12 @@ cleansite.put('/:id' ,function (req, res) {
             + "', cs_start_time = '" + cs_start_time
             + "', cs_end_time = '" + cs_end_time
             + "', cs_agenda = '" + cs_agenda
-            + "', cs_inex = " + cs_inex
-            + " , cs_ptcp_no = '" + cs_ptcp_no
+            + "', cs_inex = '" + cs_inex
+            + "', cs_ptcp_no = '" + cs_ptcp_no
             + "', cs_amount_collected = '" + cs_amount_collected
             + "', cs_ptcp_no = '" + cs_organic
-            + "', cs_ptcp_no = '" + cs_recy
-            + "', cs_ptcp_no = '" + cs_non_recy
+            + "', cs_recy = '" + cs_recy
+            + "', cs_non_recy = '" + cs_non_recy
             + "', cs_rq_tong = '" + cs_rq_tong
             + "', cs_rq_bags = '" + cs_rq_bags
             + "', cs_rq_shirt = '" + cs_rq_shirt
