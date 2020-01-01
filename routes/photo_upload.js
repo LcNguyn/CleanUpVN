@@ -5,6 +5,79 @@ const express = require("express")
 const uploadsphoto = require('../services/photo_upload.js');
 
 // const multiUpload = uploadsBusinessGallery.single('image2');
+photo_upload.get('/owner/:id/photo', function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) throw err;
+        var id = req.params.id
+        connection.query("SELECT * FROM photo WHERE p_owner = " + id, function (err, result, fields) {
+            connection.release();
+            if (err) throw err;
+            res.send(result)
+        });
+    });
+
+});
+
+photo_upload.post('/profile/:ownerid/upload', ( req, res ) => {
+    uploadsphoto( req, res, ( error ) => {
+        console.log( 'files', req.files );
+        if( error ){
+            console.log( 'errors', error );
+            res.json( { error: error } );
+        } else {
+            // If File not found
+            if( req.files === undefined ){
+                console.log( 'Error: No File Selected!' );
+                res.json( 'Error: No File Selected' );
+            } else {
+                // If Success
+                let fileArray = req.files,
+                    fileLocation;
+                const PhotoLocationArray = [];
+                var acc_id = req.params.ownerid;
+
+
+                for ( let i = 0; i < fileArray.length; i++ ) {
+                    fileLocation = fileArray[ i ].location;
+                    console.log( 'File Location:', fileLocation );
+                    PhotoLocationArray.push( fileLocation )
+                    pool.getConnection(function (err, connection) {
+                        if (err) throw err;
+                        var ALPHABET = '0123456789';
+
+                        var acc_profile_pic = fileLocation
+
+                        var insertQuery = "UPDATE `users` SET `acc_profile_pic` = '"+ acc_profile_pic + "' WHERE (`acc_id` = '"+ acc_id+"');"
+
+                        connection.query(insertQuery, function (err, result) {
+                            connection.release();
+                            if (err) throw err;
+                        });
+                    });
+
+                }
+                // Save the file name into database
+                res.json( {
+                    filesArray: fileArray,
+                    locationArray: PhotoLocationArray
+                } );
+            }
+        }
+    });
+});
+
+photo_upload.get('/site/:id/photo', function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) throw err;
+        var id = req.params.id
+        connection.query("SELECT * FROM photo WHERE p_event = " + id, function (err, result, fields) {
+            connection.release();
+            if (err) throw err;
+            res.send(result)
+        });
+    });
+
+});
 
 photo_upload.post('/basic/:ownerid/:siteid/upload', ( req, res ) => {
     uploadsphoto( req, res, ( error ) => {
@@ -139,6 +212,12 @@ photo_upload.post('/social/:ownerid/:siteid/upload', ( req, res ) => {
         }
     });
 });
+
+
+
+
+
+
 
 
 module.exports = photo_upload;

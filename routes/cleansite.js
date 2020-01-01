@@ -187,7 +187,7 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_start_time = req.param('cs_start_time','unknown')
         var cs_end_time = req.param('cs_end_time','unknown')
         var cs_agenda = req.param('cs_agenda','unknown')
-        var cs_inex = req.param('cs_inex',null)
+        var cs_inex = req.param('cs_inex','unknown')
         var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
 
         var cs_amount_collected = req.param('cs_amount_collected','unknown')

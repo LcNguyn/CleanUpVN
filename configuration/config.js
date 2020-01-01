@@ -12,6 +12,6 @@ module.exports = {
   username: "root",
   password: "locloc123",
   database: "sakila",
-  awsAccessKey: '8F4BVPhbEGCkCGjgr+4eFhwUeZvj6t5pbjK8Tmaj',
-  awsAccountId: 'AKIAI5EVRY357IJHXDCA'
+  awsAccessKey: 'p4U994iIWFgcumBMEjI1Q/PYunqd+GwHLyFHhcty',
+  awsAccountId: 'AKIAIEYGVYATL5NBWHNQ'
 };
