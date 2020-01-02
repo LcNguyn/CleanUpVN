@@ -17,6 +17,12 @@ module.exports = db.sequelize.define(
     },
     acc_username: {
       type: Sequelize.STRING
+    },
+    acc_profile_pic: {
+      type: Sequelize.STRING
+    },
+    acc_description: {
+      type: Sequelize.STRING
     }
   },
   {

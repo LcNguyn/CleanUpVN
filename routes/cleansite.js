@@ -42,14 +42,17 @@ cleansite.post('/', function (req, res) {
         var cs_organic = req.param('cs_organic','unknown')
         var cs_recy = req.param('cs_recy','unknown')
         var cs_non_recy = req.param('cs_non_recy','unknown')
-        var cs_rq_tong = req.param('cs_agenda','unknown')
-        var cs_rq_bags = req.param('cs_agenda','unknown')
-        var cs_rq_shirt = req.param('cs_agenda','unknown')
-        var cs_rq_set = req.param('cs_agenda','unknown')
+        var cs_xs_shirt = req.param('cs_xs_shirt','0')
+        var cs_s_shirt = req.param('cs_s_shirt','0')
+        var cs_m_shirt = req.param('cs_m_shirt','0')
+        var cs_l_shirt = req.param('cs_l_shirt','0')
+        var cs_xl_shirt = req.param('cs_xl_shirt','0')
+        var cs_rq_set = req.param('cs_rq_set','0')
 
         var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_logo, cs_description, cs_lat, cs_long," +
             " cs_address_name, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_owner_name, cs_agenda, cs_inex," +
-            " cs_ptcp_no,  cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_rq_tong, cs_rq_bags, cs_rq_shirt, cs_rq_set)" +
+            " cs_ptcp_no,  cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_xs_shirt, cs_s_shirt, cs_m_shirt, cs_l_shirt, cs_xl_shirt," +
+            " cs_rq_set)" +
             " VALUES ('" + clean_site_id + "', '"
             + cs_name + "', '"
             + cs_logo + "', '"
@@ -70,9 +73,11 @@ cleansite.post('/', function (req, res) {
             + cs_organic +  "', '"
             + cs_recy +  "', '"
             + cs_non_recy +  "', '"
-            + cs_rq_tong +  "', '"
-            + cs_rq_bags +  "', '"
-            + cs_rq_shirt +  "', '"
+            + cs_xs_shirt +  "', '"
+            + cs_s_shirt +  "', '"
+            + cs_m_shirt +  "', '"
+            + cs_l_shirt +  "', '"
+            + cs_xl_shirt +  "', '"
             + cs_rq_set +"')";
         connection.query(insertQuery, function (err, result) {
             connection.release();
@@ -195,10 +200,12 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_organic = req.param('cs_organic','unknown')
         var cs_recy = req.param('cs_recy','unknown')
         var cs_non_recy = req.param('cs_non_recy','unknown')
-        var cs_rq_tong = req.param('cs_rq_tong','unknown')
-        var cs_rq_bags = req.param('cs_rq_bags','unknown')
-        var cs_rq_shirt = req.param('cs_rq_shirt','unknown')
-        var cs_rq_set = req.param('cs_rq_set','unknown')
+        var cs_xs_shirt = req.param('cs_xs_shirt','0')
+        var cs_s_shirt = req.param('cs_s_shirt','0')
+        var cs_m_shirt = req.param('cs_m_shirt','0')
+        var cs_l_shirt = req.param('cs_l_shirt','0')
+        var cs_xl_shirt = req.param('cs_xl_shirt','0')
+        var cs_rq_set = req.param('cs_rq_set','0')
 
         connection.query("UPDATE clean_site SET cs_name = '" + cs_name
             + "', cs_description = '" + cs_description
@@ -212,12 +219,14 @@ cleansite.put('/:id' ,function (req, res) {
             + "', cs_inex = '" + cs_inex
             + "', cs_ptcp_no = '" + cs_ptcp_no
             + "', cs_amount_collected = '" + cs_amount_collected
-            + "', cs_ptcp_no = '" + cs_organic
+            + "', cs_organic = '" + cs_organic
             + "', cs_recy = '" + cs_recy
             + "', cs_non_recy = '" + cs_non_recy
-            + "', cs_rq_tong = '" + cs_rq_tong
-            + "', cs_rq_bags = '" + cs_rq_bags
-            + "', cs_rq_shirt = '" + cs_rq_shirt
+            + "', cs_xs_shirt = '" + cs_xs_shirt
+            + "', cs_s_shirt = '" + cs_s_shirt
+            + "', cs_m_shirt = '" + cs_m_shirt
+            + "', cs_l_shirt = '" + cs_l_shirt
+            + "', cs_xl_shirt = '" + cs_xl_shirt
             + "', cs_rq_set = '" + cs_rq_set
             + "' WHERE clean_site_id = '" + id + "'", (error, results, fields) => {
             connection.release();

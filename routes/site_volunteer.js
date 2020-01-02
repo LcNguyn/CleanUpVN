@@ -8,9 +8,10 @@ site_volunteer.post('/', function (req, res) {
         if (err) throw err;
         var sv_site = req.param('sv_site','unknown')
         var sv_volunteer  = req.param('sv_volunteer','unknown')
-        var sv_cleanuptools  =req.param('sv_cleanuptools',false)
-        var sv_shirt  =req.param('sv_shirt','unknown')
+        var sv_cleanuptools  = req.param('sv_cleanuptools',false)
+        var sv_shirt  = req.param('sv_shirt','unknown')
 
+        console.log(sv_cleanuptools)
 
         var insertQuery = "INSERT INTO site_vlt (sv_site, sv_volunteer, sv_cleanuptools, sv_shirt)" +
             " VALUES ('" + sv_site + "', '"  + sv_volunteer + "', " + sv_cleanuptools + ", '" + sv_shirt + "')";
@@ -27,7 +28,6 @@ site_volunteer.post('/', function (req, res) {
                         "Mọi thông tin chi tiết xin liên hệ qua anh Hiếu - 0915209318.\n\n" +
                         "Thân chào,\n" +
                         "Ban tổ chức Clean up Vietnam"
-                    connection.release();
                     var mailOptions = {
                         from: 'cleanupvn@gmail.com',
                         to: 'thienhieu215@gmail.com',
@@ -52,10 +52,50 @@ site_volunteer.post('/', function (req, res) {
                             console.log('Email sent: ' + info.response);
                         }
                     });
-                    if (err) throw err;
-                    res.send(result)
-                });
 
+                    if (err) throw err;
+                    if (sv_shirt == 'XS') {
+                        var query_shirt = parseInt(site_result[0].cs_xs_shirt) +1
+                        var insertQuery2 = "UPDATE clean_site SET `cs_xs_shirt` = '"+ query_shirt +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                    }
+                    if (sv_shirt == 'S') {
+                        var query_shirt = parseInt(site_result[0].cs_s_shirt) +1
+                        var insertQuery2 = "UPDATE clean_site SET `cs_s_shirt` = '"+ query_shirt +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                    }
+                    if (sv_shirt == 'M') {
+                        var query_shirt = parseInt(site_result[0].cs_m_shirt) +1
+                        var insertQuery2 = "UPDATE clean_site SET `cs_m_shirt` = '"+ query_shirt +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                    }
+                    if (sv_shirt == 'L') {
+                        var query_shirt = parseInt(site_result[0].cs_l_shirt) +1
+
+                        var insertQuery2 = "UPDATE clean_site SET `cs_l_shirt` = '"+ query_shirt +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                    }
+                    if (sv_shirt == 'XL') {
+                        var query_shirt = parseInt(site_result[0].cs_xl_shirt) +1
+                        var insertQuery2 = "UPDATE clean_site SET `cs_xl_shirt` = '"+ query_shirt +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                    }
+                    console.log(insertQuery2)
+                    connection.query(insertQuery2, function (err, shirt_result, fields) {
+                        if (err) throw err;
+                        if (sv_cleanuptools == true) {
+                            var query_set = parseInt(site_result[0].cs_rq_set) +1
+                            var insertQuery3 = "UPDATE clean_site SET `cs_rq_set` = '"+ query_set +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                        } else {
+                            var query_set = parseInt(site_result[0].cs_rq_set)
+                            var insertQuery3 = "UPDATE clean_site SET `cs_rq_set` = '"+ query_set +"' WHERE (`clean_site_id` = '" + sv_site +"')"
+                        }
+
+                        connection.query(insertQuery3, function (err, shirt_result, fields) {
+
+                            connection.release();
+
+                            if (err) throw err;
+
+                            res.send(shirt_result)
+                        });
+                    });
+                });
             });
         });
     });

@@ -1,8 +1,7 @@
 const express = require("express")
     , photo_upload = express.Router()
     , pool    = require('../database/pool.js')
-
-const uploadsphoto = require('../services/photo_upload.js');
+    , uploadsphoto = require('../services/photo_upload.js');
 
 // const multiUpload = uploadsBusinessGallery.single('image2');
 photo_upload.get('/owner/:id/photo', function (req, res) {
@@ -212,12 +211,5 @@ photo_upload.post('/social/:ownerid/:siteid/upload', ( req, res ) => {
         }
     });
 });
-
-
-
-
-
-
-
 
 module.exports = photo_upload;

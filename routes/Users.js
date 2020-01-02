@@ -73,6 +73,8 @@ users.post('/register', (req, res) => {
     acc_username: req.body.acc_username,
     acc_email: req.body.acc_email,
     acc_pass: req.body.acc_pass,
+    acc_profile_pic: req.body.acc_profile_pic,
+    acc_description: req.body.acc_description
   }
   var ALPHABET = '0123456789';
 

@@ -2,23 +2,23 @@ const express = require('express')
     , account = express.Router()
     , pool    = require('../database/pool.js')
 
-account.post('/', function (req, res) {
-    pool.getConnection(function (err, connection) {
-        if (err) throw err;
-        var acc_email = req.param('acc_email','unknown')
-        var acc_pass = req.param('acc_pass','unknown')
-        var acc_username  =req.param('acc_username','unknown')
-        var acc_profile_pic = req.param('acc_profile_pic','unknown')
-
-        var insertQuery = "INSERT INTO users (acc_email, acc_pass, acc_username, acc_profile_pic)" +
-            " VALUES ('" + acc_email + "', '" + acc_pass + "', '" + acc_username + "', '" + acc_profile_pic +"')";
-        connection.query(insertQuery, function (err, result) {
-            connection.release();
-            if (err) throw err;
-            res.send(result)
-        });
-    });
-});
+// account.post('/', function (req, res) {
+//     pool.getConnection(function (err, connection) {
+//         if (err) throw err;
+//         var acc_email = req.param('acc_email','unknown')
+//         var acc_pass = req.param('acc_pass','unknown')
+//         var acc_username  =req.param('acc_username','unknown')
+//         var acc_profile_pic = req.param('acc_profile_pic','unknown')
+//
+//         var insertQuery = "INSERT INTO users (acc_email, acc_pass, acc_username, acc_profile_pic)" +
+//             " VALUES ('" + acc_email + "', '" + acc_pass + "', '" + acc_username + "', '" + acc_profile_pic +"')";
+//         connection.query(insertQuery, function (err, result) {
+//             connection.release();
+//             if (err) throw err;
+//             res.send(result)
+//         });
+//     });
+// });
 
 account.get('/all', function (req, res) {
     console.log("Hi")
@@ -49,28 +49,28 @@ account.post('/delete/:id' , function (req, res) {
     });
 });
 
-account.get('/signin/:email/:password', function (req, res) {
-    /**
-     * VERIFY ACCOUNT
-     */
-    console.log("Hi")
-    pool.getConnection(function (err, connection) {
-        if (err) throw err;
-        var email = req.params.email
-        var password = req.params.password
-        connection.query("SELECT * FROM users WHERE acc_email = '" + email + "' AND acc_pass = '" + password + "'", function (err, result, fields) {
-            connection.release();
-            if (err) throw err;
-            if(result) {
-                res.send(result)
-            }
-            else {
-                res.send("Try Again")
-            }
-        });
-    });
-
-});
+// account.get('/signin/:email/:password', function (req, res) {
+//     /**
+//      * VERIFY ACCOUNT
+//      */
+//     console.log("Hi")
+//     pool.getConnection(function (err, connection) {
+//         if (err) throw err;
+//         var email = req.params.email
+//         var password = req.params.password
+//         connection.query("SELECT * FROM users WHERE acc_email = '" + email + "' AND acc_pass = '" + password + "'", function (err, result, fields) {
+//             connection.release();
+//             if (err) throw err;
+//             if(result) {
+//                 res.send(result)
+//             }
+//             else {
+//                 res.send("Try Again")
+//             }
+//         });
+//     });
+//
+// });
 
 account.get('/:id', function (req, res) {
     pool.getConnection(function (err, connection) {
@@ -94,8 +94,9 @@ account.put('/:id' ,function (req, res) {
         var id = req.params.id
         var acc_pass = req.param('acc_pass','unknown')
         var acc_username  =req.param('acc_username','unknown')
-        var acc_profile_pic = req.param('acc_profile_pic','unknown')
-        connection.query("UPDATE volunteer SET acc_pass = '" + acc_pass + "', acc_username = '" + acc_username + "', acc_profile_pic = '" + acc_profile_pic + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
+        var acc_description = req.param('acc_description','unknown')
+
+        connection.query("UPDATE volunteer SET acc_pass = '" + acc_pass + "', acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
             connection.release();
             if (error)
                 return console.error(error.message);
