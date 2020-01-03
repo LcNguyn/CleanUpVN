@@ -1,6 +1,7 @@
 const express = require('express')
     , cleansite = express.Router()
     , pool    = require('../database/pool.js')
+    , nodemailer = require('nodemailer')
 
 cleansite.post('/', function (req, res) {
     pool.getConnection(function (err, connection) {
@@ -255,6 +256,26 @@ cleansite.get('/:id/volunteer', function (req, res) {
     });
 });
 
+cleansite.post('/:id/mailvolunteer', function (req, res) {
+    /**
+     * GET VOLUNTEER BY SITE ID
+     */
+    pool.getConnection(function (err, connection) {
+        if (err) throw err;
+        var id = req.params.id
+        connection.query("SELECT * FROM volunteer, (SELECT sv_volunteer as volunteer_id FROM site_vlt WHERE sv_site = '" + id + "') as site_volunteer WHERE volunteer.vlt_email = site_volunteer.volunteer_id", function (err, results, fields) {
+            connection.query("SELECT * FROM clean_site WHERE clean_site_id = '" + id + "'", function (err, site_result, fields) {
+                results.forEach(function(result) {
+                    mailing(result,site_result)
+                });
+            });
+            connection.release();
+            if (err) throw err;
+            res.send(results)
+        });
+    });
+});
+
 cleansite.get('/:id/countvolunteer', function (req, res) {
     /**
      * COUNT VLT BY SITE
@@ -326,4 +347,43 @@ cleansite.get('/:id/volunteer/download', function (req, res) {
     });
 });
 
+function mailing( vlt_result, site_result ){
+    const new_mail = "Thân gửi " +  vlt_result.vlt_name + ", \n" +
+        " Cảm ơn bạn đã tham gia vào sự kiện Clean Up của chúng tôi. \n\n" +
+        " Thông tin chi tiết:\n "+
+        "\t1. Tên sự kiện: \n " + site_result[0].cs_name + "\n" +
+        "\t2. Địa chỉ: \n " + site_result[0].cs_address + "\n" +
+        "\t3. Ngày và Giờ: \n  " + site_result[0].cs_start_time + "\n" +
+        "\t4. Kết thúc vào:\n  " + site_result[0].cs_end_time + "\n" +
+        "Mọi thông tin chi tiết xin liên hệ qua anh Hiếu - 0915209318.\n\n" +
+        "Thân chào,\n" +
+        "Ban tổ chức Clean up Vietnam"
+    var mailOptions = {
+        from: 'cleanupvn@gmail.com',
+        to: 'vinzeroy28@gmail.com',
+        subject: '[CLEANUP VN] Thank you letter and Reminder',
+        text: new_mail
+    };
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',//smtp.gmail.com  //in place of service use host...
+        secure: false,//true
+        port: 25,//465
+        auth: {
+            user: 'cleanupvn@gmail.com',
+            pass: 'go123green'
+        }, tls: {
+            rejectUnauthorized: false
+        }
+    });
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
 module.exports = cleansite;
+
+
