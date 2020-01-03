@@ -49,11 +49,12 @@ cleansite.post('/', function (req, res) {
         var cs_l_shirt = req.param('cs_l_shirt','0')
         var cs_xl_shirt = req.param('cs_xl_shirt','0')
         var cs_rq_set = req.param('cs_rq_set','0')
+        var cs_pay = req.param('cs_pay',false)
 
         var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_logo, cs_description, cs_lat, cs_long," +
             " cs_address_name, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_owner_name, cs_agenda, cs_inex," +
-            " cs_ptcp_no,  cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_xs_shirt, cs_s_shirt, cs_m_shirt, cs_l_shirt, cs_xl_shirt," +
-            " cs_rq_set)" +
+            " cs_ptcp_no, cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_xs_shirt, cs_s_shirt, cs_m_shirt, cs_l_shirt, cs_xl_shirt," +
+            " cs_rq_set, cs_pay)" +
             " VALUES ('" + clean_site_id + "', '"
             + cs_name + "', '"
             + cs_logo + "', '"
@@ -79,7 +80,9 @@ cleansite.post('/', function (req, res) {
             + cs_m_shirt +  "', '"
             + cs_l_shirt +  "', '"
             + cs_xl_shirt +  "', '"
-            + cs_rq_set +"')";
+            + cs_rq_set + "', "
+            + cs_pay
+            +")";
         connection.query(insertQuery, function (err, result) {
             connection.release();
             if (err) throw err;
@@ -207,6 +210,7 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_l_shirt = req.param('cs_l_shirt','0')
         var cs_xl_shirt = req.param('cs_xl_shirt','0')
         var cs_rq_set = req.param('cs_rq_set','0')
+        var cs_pay = req.param('cs_pay',false)
 
         connection.query("UPDATE clean_site SET cs_name = '" + cs_name
             + "', cs_description = '" + cs_description
@@ -229,7 +233,8 @@ cleansite.put('/:id' ,function (req, res) {
             + "', cs_l_shirt = '" + cs_l_shirt
             + "', cs_xl_shirt = '" + cs_xl_shirt
             + "', cs_rq_set = '" + cs_rq_set
-            + "' WHERE clean_site_id = '" + id + "'", (error, results, fields) => {
+            + "', cs_pay = " + cs_pay
+            + " WHERE clean_site_id = '" + id + "'", (error, results, fields) => {
             connection.release();
             if (error)
                 return console.error(error.message);

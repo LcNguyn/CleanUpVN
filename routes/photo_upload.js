@@ -102,6 +102,9 @@ photo_upload.post('/basic/:ownerid/:siteid/upload', ( req, res ) => {
                     fileLocation = fileArray[ i ].location;
                     console.log( 'File Location:', fileLocation );
                     PhotoLocationArray.push( fileLocation )
+                }
+
+                for ( let i = 0; i < PhotoLocationArray.length; i++ ) {
                     pool.getConnection(function (err, connection) {
                         if (err) throw err;
                         // res.setHeader("Access-Control-Allow-Origin", "http://cleanupvn.ap-southeast-1.elasticbeanstalk.com");
@@ -120,7 +123,7 @@ photo_upload.post('/basic/:ownerid/:siteid/upload', ( req, res ) => {
                             return rtn;
                         }
                         var p_id =  generate()
-                        var p_url = fileLocation
+                        var p_url = PhotoLocationArray[i]
 
 
                         var insertQuery = "INSERT INTO photo (p_id, p_url, p_owner, p_event)" +
@@ -132,9 +135,12 @@ photo_upload.post('/basic/:ownerid/:siteid/upload', ( req, res ) => {
                             connection.release();
                             if (err) throw err;
                         });
-                    });
 
+                    });
                 }
+
+
+
                 // Save the file name into database
                 res.json( {
                     filesArray: fileArray,
@@ -169,6 +175,10 @@ photo_upload.post('/social/:ownerid/:siteid/upload', ( req, res ) => {
                     fileLocation = fileArray[ i ].location;
                     console.log( 'File Location:', fileLocation );
                     PhotoLocationArray.push( fileLocation )
+
+                }
+
+                for ( let i = 0; i < PhotoLocationArray.length; i++ ) {
                     pool.getConnection(function (err, connection) {
                         if (err) throw err;
                         // res.setHeader("Access-Control-Allow-Origin", "http://cleanupvn.ap-southeast-1.elasticbeanstalk.com");
@@ -187,21 +197,22 @@ photo_upload.post('/social/:ownerid/:siteid/upload', ( req, res ) => {
                             return rtn;
                         }
                         var p_id =  generate()
-                        var p_url = fileLocation
+                        var p_url = PhotoLocationArray[i]
 
 
-                        var insertQuery = "INSERT INTO photo (p_id, p_url, p_social_owner, p_event)" +
+                        var insertQuery = "INSERT INTO photo (p_id, p_url, p_owner, p_event)" +
                             " VALUES ('" + p_id + "', '"
                             + p_url + "', "
-                            + p_social_owner + ", "
+                            + p_owner + ", "
                             + p_event +")";
                         connection.query(insertQuery, function (err, result) {
                             connection.release();
                             if (err) throw err;
                         });
-                    });
 
+                    });
                 }
+
                 // Save the file name into database
                 res.json( {
                     filesArray: fileArray,
