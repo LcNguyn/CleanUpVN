@@ -8,12 +8,19 @@ const express           =   require('express')
     , CLIENT_SECRET     =   OAuth2Data.web.client_secret
     , REDIRECT_URL      =   OAuth2Data.web.redirect_uris
     , social_login      =   express.Router()
-    , cors = require('cors')
+    , cors              =   require('cors')
     , pool              =   require('../database/pool.js')
+    , bcrypt            =   require('bcryptjs')
     , Social_user       =   require('../models/SocialUser');
+
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const scope = [,]
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('myTotalySecretKey');
+
+var localStorage = require('localStorage')
+
+
 
 social_login.use(cors())
 
@@ -39,8 +46,9 @@ passport.use(new FacebookStrategy({
             //Check whether the User exists or not using profile.id
             const socialUserData = {
                 user_id: profile.id,
-                user_name: profile.name
+                user_name: profile.displayName
             }
+            console.log("Token: " + accessToken)
             Social_user.findOne({
                 where: {
                     user_id: profile.id
@@ -51,9 +59,19 @@ passport.use(new FacebookStrategy({
                     if (!social_user) {
                         console.log("There is no such user, adding now");
                         // if(err) throw err;
+
                         Social_user.create(socialUserData)
                             .then(social_user => {
                                 console.log({ status: social_user.user_id + 'Registered!' })
+                                var token = jwt.sign(social_user.dataValues, process.env.SECRET_KEY, {
+                                    expiresIn: 1440
+                                })
+                                profile["manualToken"] = token
+                                console.log("Profile !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                console.log(profile)
+                                return done(null, profile);
+
+
                             })
                             .catch(err => {
                                 console.log('error: ' + err)
@@ -86,6 +104,17 @@ passport.use(new FacebookStrategy({
                         // })
                     } else {
                         console.log("User already exists in database");
+                        var token = jwt.sign(social_user.dataValues, process.env.SECRET_KEY, {
+                            expiresIn: 1440
+                        })
+                        profile["manualToken"] = token
+                        console.log("Profile !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                        console.log(profile)
+                        return done(null, profile);
+
+
+
+
                         // console.log(token)
                         // res1.send(token)
                     }
@@ -93,7 +122,7 @@ passport.use(new FacebookStrategy({
                 .catch(err => {
                     console.log(err)
                 })
-            return done(null, profile);
+            // return done(null, profile);
 
             // if(config.use_database) {
             // }
@@ -117,7 +146,8 @@ passport.use(new FacebookStrategy({
             //         console.log("User already exists in database");
             //     }
             // });
-            // return done(null, profile);
+
+
         });
     }
 ));
@@ -127,12 +157,13 @@ social_login.get('/fbaccount', ensureAuthenticated, function(req, res){
 });
 
 social_login.get('/fblogin', function(req, res){
+    console.log("login ne")
     const user = req.user;
     console.log(user)
     if (!user) {
-        res.render('index', {user: req.user})
+        res.send("Not authenticated")
     } else {
-        res.json({ "authorize": "true" });
+        res.send(user.manualToken)
     }
     // res.render('index', { user: req.user });
 });
@@ -140,14 +171,15 @@ social_login.get('/fblogin', function(req, res){
 social_login.get('/auth/facebook', passport.authenticate('facebook',{scope:'email'}));
 
 social_login.get('/auth/facebook/callback',
-    passport.authenticate('facebook', { successRedirect : '/sociallogin/fblogin', failureRedirect: '/login' }),
-    function(req, res) {
-        res.redirect('/sociallogin/fblogin');
-    });
+    passport.authenticate('facebook', { successRedirect : '/#/event-list', failureRedirect: '/#/sign-in' })
+    // function(req, res) {
+    //     res.redirect('/sociallogin/fblogin');
+    // }
+    );
 
 social_login.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/fblogin');
+    // res.redirect('/#/sign-in');
 });
 
 function ensureAuthenticated(req, res, next) {
@@ -161,15 +193,7 @@ const oAuth2Clientplus = google.plus({ version: 'v1', oAuth2Client });
 
 
 social_login.get('/gmaillogin', (req, res) => {
-    if (!authed) {
-        // Generate an OAuth URL and redirect there
-        const url = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: 'https://www.googleapis.com/auth/userinfo.profile'
-        });
-        console.log(url)
-        res.redirect(url);
-    } else {
+
         const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
         var oauth2 = google.oauth2({
@@ -178,7 +202,7 @@ social_login.get('/gmaillogin', (req, res) => {
         });
 
         oauth2.userinfo.v2.me.get(
-            function(err, res) {
+            function(err, res1) {
                 // if (err) {
                 //     console.log(err);
                 // } else {
@@ -186,12 +210,13 @@ social_login.get('/gmaillogin', (req, res) => {
                 // }
 
                 const socialUserData = {
-                    user_id: res.data.id,
-                    user_name: res.data.name
+                    user_id: res1.data.id,
+                    user_name: res1.data.name
                 }
+
                 Social_user.findOne({
                     where: {
-                        user_id: res.data.id
+                        user_id: res1.data.id
                     }
                 })
                     //TODO bcrypt
@@ -211,7 +236,11 @@ social_login.get('/gmaillogin', (req, res) => {
                             // pool.query("INSERT into social_user (user_id,user_name) VALUES ('"+ profile.id +"','"+ profile.displayName +"')");
                             // , function (err, result, fields) {
                             // connection.release();
-                            console.log("Done")
+                            var token = jwt.sign(social_user.dataValues, process.env.SECRET_KEY, {
+                                expiresIn: 1440
+                            })
+                            res.json({'authorization': 'true','token': token});
+
 
                             // res1.json({ "authorize": "true" })
 
@@ -235,7 +264,10 @@ social_login.get('/gmaillogin', (req, res) => {
                         } else {
                             console.log("User already exists in database");
                             // console.log(token)
-                            // res1.send(token)
+                            var token = jwt.sign(social_user.dataValues, process.env.SECRET_KEY, {
+                                expiresIn: 1440
+                            })
+                            res.json({'authorization': 'true','token': token});
                         }
                     })
                     .catch(err => {
@@ -333,8 +365,18 @@ social_login.get('/gmaillogin', (req, res) => {
         //
         //
         // });
-        res.json({ "authorize": "true" });
-    }
+
+
+})
+
+social_login.get('/auth/google', (req, res) => {
+            // Generate an OAuth URL and redirect there
+            const url = oAuth2Client.generateAuthUrl({
+                access_type: 'offline',
+                scope: 'https://www.googleapis.com/auth/userinfo.profile'
+            });
+            console.log(url)
+            res.redirect(url);
 })
 
 social_login.get('/auth/google/callback', function (req, res) {
@@ -345,11 +387,13 @@ social_login.get('/auth/google/callback', function (req, res) {
             if (err) {
                 console.log('Error authenticating')
                 console.log(err);
+                res.redirect('/#/sign-in');
+
             } else {
                 console.log('Successfully authenticated');
                 oAuth2Client.setCredentials(tokens);
                 authed = true;
-                res.redirect('/sociallogin/gmaillogin')
+                res.redirect('/#/event-list');
             }
         });
     }

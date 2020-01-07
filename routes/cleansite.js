@@ -34,6 +34,8 @@ cleansite.post('/', function (req, res) {
         var cs_owner = req.param('cs_owner',null)
         var cs_social_owner = req.param('cs_social_owner',null)
         var cs_owner_name = req.param('cs_owner_name',null)
+        var cs_owner_description = req.param('cs_owner_description',null)
+
         // var cs_owner = 'test_acc1@gmail.com'
         var cs_agenda = req.param('cs_agenda','unknown')
         var cs_inex = req.param('cs_inex','unknown')
@@ -52,7 +54,7 @@ cleansite.post('/', function (req, res) {
         var cs_pay = req.param('cs_pay',false)
 
         var insertQuery = "INSERT INTO clean_site (clean_site_id, cs_name, cs_logo, cs_description, cs_lat, cs_long," +
-            " cs_address_name, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_owner_name, cs_agenda, cs_inex," +
+            " cs_address_name, cs_address, cs_start_time, cs_end_time, cs_owner, cs_social_owner, cs_owner_name, cs_owner_description, cs_agenda, cs_inex," +
             " cs_ptcp_no, cs_amount_collected, cs_organic, cs_recy, cs_non_recy, cs_xs_shirt, cs_s_shirt, cs_m_shirt, cs_l_shirt, cs_xl_shirt," +
             " cs_rq_set, cs_pay)" +
             " VALUES ('" + clean_site_id + "', '"
@@ -68,6 +70,7 @@ cleansite.post('/', function (req, res) {
             + cs_owner + ", "
             + cs_social_owner + ", '"
             + cs_owner_name + "', '"
+            + cs_owner_description + "', '"
             + cs_agenda + "', '"
             + cs_inex + "', '"
             + cs_ptcp_no +  "', '"
@@ -105,6 +108,10 @@ cleansite.get('/all', function (req, res) {
         });
     });
 
+});
+
+cleansite.get('/bye', function (req, res) {
+    res.send("Byeeeeeeeeeeeeeeee")
 });
 
 cleansite.get('/all/amount', function (req, res) {
@@ -195,6 +202,8 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_address = req.param('cs_address','unknown')
         var cs_start_time = req.param('cs_start_time','unknown')
         var cs_end_time = req.param('cs_end_time','unknown')
+        var cs_owner_name = req.param('cs_owner_name','unknown')
+        var cs_owner_description = req.param('cs_owner_description','unknown')
         var cs_agenda = req.param('cs_agenda','unknown')
         var cs_inex = req.param('cs_inex','unknown')
         var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
@@ -220,6 +229,8 @@ cleansite.put('/:id' ,function (req, res) {
             + "', cs_address = '" + cs_address
             + "', cs_start_time = '" + cs_start_time
             + "', cs_end_time = '" + cs_end_time
+            + "', cs_owner_name = '" + cs_owner_name
+            + "', cs_owner_description = '" + cs_owner_description
             + "', cs_agenda = '" + cs_agenda
             + "', cs_inex = '" + cs_inex
             + "', cs_ptcp_no = '" + cs_ptcp_no
@@ -268,12 +279,14 @@ cleansite.post('/:id/mailvolunteer', function (req, res) {
     pool.getConnection(function (err, connection) {
         if (err) throw err;
         var id = req.params.id
+        console.log("Sending Email")
         connection.query("SELECT * FROM volunteer, (SELECT sv_volunteer as volunteer_id FROM site_vlt WHERE sv_site = '" + id + "') as site_volunteer WHERE volunteer.vlt_email = site_volunteer.volunteer_id", function (err, results, fields) {
             connection.query("SELECT * FROM clean_site WHERE clean_site_id = '" + id + "'", function (err, site_result, fields) {
                 results.forEach(function(result) {
                     mailing(result,site_result)
                 });
             });
+            console.log("Emails Sent")
             connection.release();
             if (err) throw err;
             res.send(results)

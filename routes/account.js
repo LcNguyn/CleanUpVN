@@ -1,6 +1,9 @@
 const express = require('express')
     , account = express.Router()
     , pool    = require('../database/pool.js')
+    , bcrypt = require('bcryptjs')
+
+
 
 // account.post('/', function (req, res) {
 //     pool.getConnection(function (err, connection) {
@@ -76,10 +79,18 @@ account.get('/:id', function (req, res) {
     pool.getConnection(function (err, connection) {
         if (err) throw err;
         var id = req.params.id
-        connection.query("SELECT * FROM users WHERE acc_id = " + id , function (err, result, fields) {
+        connection.query("SELECT * FROM social_user WHERE user_id = " + id, function (err, result, fields) {
+            if(result.length == 0) {
+                connection.query("SELECT * FROM users WHERE acc_id = " + id, function (err, result2, fields) {
+                    if (err) throw err;
+                    res.send(result2)
+                });
+            } else {
+                res.send(result)
+            }
             connection.release();
             if (err) throw err;
-            res.send(result)
+
         });
     });
 
@@ -91,17 +102,23 @@ account.put('/:id' ,function (req, res) {
         if (err) {
             return console.log(err)
         };
+
+
         var id = req.params.id
         var acc_pass = req.param('acc_pass','unknown')
         var acc_username  =req.param('acc_username','unknown')
         var acc_description = req.param('acc_description','unknown')
 
-        connection.query("UPDATE volunteer SET acc_pass = '" + acc_pass + "', acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
-            connection.release();
-            if (error)
-                return console.error(error.message);
-            res.send('Update Row(s)');
-        });
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(acc_pass, salt, function(err, hash) {
+                connection.query("UPDATE volunteer SET acc_pass = '" + hash + "', acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
+                    connection.release();
+                    if (error)
+                        return console.error(error.message);
+                    res.send('Update Row(s)');
+                });
+            });
+        })
     });
 });
 

@@ -5,7 +5,7 @@ const express           =   require('express')
     , passport          =   require('passport')
     , bodyParser        =   require('body-parser')
     , path              =   require('path')
-    , main              =   express()
+    , app              =   express()
     , Users             =   require('./routes/Users')
     , photo_upload      =   require( './routes/photo_upload.js' )
     , cleansite         =   require( './routes/cleansite.js' )
@@ -14,28 +14,40 @@ const express           =   require('express')
     , site_volunteer    =   require( './routes/site_volunteer.js' )
     , social_login      =   require( './routes/social_login.js')
 
-main.use(express.static(path.join(__dirname,"/build")));
-main.use(bodyParser.json());
-main.use(bodyParser.urlencoded({
+app.use(express.static(path.join(__dirname,"/build")));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
     extended: false
 }));
-main.use(cors())
-main.set('views', __dirname + '/views');
-main.set('view engine', 'ejs');
-main.use(cookieParser());
-main.use(bodyParser.urlencoded({ extended: false }));
-main.use(session({ secret: 'keyboard cat', key: 'sid'}));
-main.use(passport.initialize());
-main.use(passport.session());
-main.use(express.static(__dirname + '/public'));
+app.use(cors())
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({ secret: 'keyboard cat', key: 'sid'}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(__dirname + '/public'));
 
-var port = process.env.PORT || 8081;
-
-// set port
-main.listen(port, 'localhost', function () {
-    console.log('Node main is running ' + port);
+app.all('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
 });
-module.exports = main;
+
+// var port = process.env.PORT || 9003;
+//
+// // set port
+// app.listen(port, 'localhost', function () {
+//     console.log('Node main is running ' + port);
+// });
+
+app.get("/", (req, res) => res.send(`Hello World2svsdv3123!`));
+
+app.listen(3000, () => {
+    console.log(`Example app listening on port 3000!`);
+});
+
+module.exports = app;
 
 // var pool = mysql.createPool({
 //     connectionLimit: 10, // default = 10
@@ -47,14 +59,19 @@ module.exports = main;
 // });
 
 
-main.use('/sociallogin', social_login)
-main.use('/users', Users)
-main.use( '/photo/', photo_upload );
-main.use('/cleansite/', cleansite);
-main.use('/account/', account);
-main.use('/volunteer/', volunteer);
-main.use('/sitevolunteer/', site_volunteer);
+app.use('/sociallogin', social_login)
+app.use('/users', Users)
+app.use( '/photo/', photo_upload );
+app.use('/cleansite/', cleansite);
+app.use('/account/', account);
+app.use('/volunteer/', volunteer);
+app.use('/sitevolunteer/', site_volunteer);
 
-main.get("/*", (req,res) => {
+
+app.get('/bye', function (req, res) {
+    res.send("Byeeeeeeeeeeeeeeee")
+});
+
+app.get("/*", (req,res) => {
     res.sendFile(path.join(__dirname,"build/index.html"))
 })
