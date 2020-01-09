@@ -39,12 +39,12 @@ cleansite.post('/', function (req, res) {
         // var cs_owner = 'test_acc1@gmail.com'
         var cs_agenda = req.param('cs_agenda','unknown')
         var cs_inex = req.param('cs_inex','unknown')
-        var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
+        var cs_ptcp_no = req.param('cs_ptcp_no','0')
 
-        var cs_amount_collected = req.param('cs_amount_collected','unknown')
-        var cs_organic = req.param('cs_organic','unknown')
-        var cs_recy = req.param('cs_recy','unknown')
-        var cs_non_recy = req.param('cs_non_recy','unknown')
+        var cs_amount_collected = req.param('cs_amount_collected','0')
+        var cs_organic = req.param('cs_organic','0')
+        var cs_recy = req.param('cs_recy','0')
+        var cs_non_recy = req.param('cs_non_recy','0')
         var cs_xs_shirt = req.param('cs_xs_shirt','0')
         var cs_s_shirt = req.param('cs_s_shirt','0')
         var cs_m_shirt = req.param('cs_m_shirt','0')
@@ -86,11 +86,38 @@ cleansite.post('/', function (req, res) {
             + cs_rq_set + "', "
             + cs_pay
             +")";
-        connection.query(insertQuery, function (err, result) {
-            connection.release();
-            if (err) throw err;
-            res.send(result)
-        });
+
+
+        if (cs_owner != null) {
+            connection.query("SELECT * FROM social_user WHERE user_id = " + cs_owner, function (err, result, fields) {
+                if(result.length == 0) {
+                    connection.query("SELECT * FROM users WHERE acc_id = " + cs_owner, function (err, result2, fields) {
+                        if (err) throw err;
+                        cs_owner_name = result2[0].user_name
+                        cs_owner_description = result2[0].user_description
+                        connection.query(insertQuery, function (err, result3) {
+                            connection.release();
+                            if (err) throw err;
+                            res.send(result3)
+                        });
+
+                    });
+                } else {
+                    cs_owner_name = result[0].acc_username
+                    cs_owner_description = result[0].acc_description
+                    connection.query(insertQuery, function (err, result3) {
+                        connection.release();
+                        if (err) throw err;
+                        res.send(result3)
+                    });
+                }
+                connection.release();
+                if (err) throw err;
+
+            });
+        }
+
+
     });
 });
 
@@ -206,13 +233,13 @@ cleansite.put('/:id' ,function (req, res) {
         var cs_owner_description = req.param('cs_owner_description','unknown')
         var cs_agenda = req.param('cs_agenda','unknown')
         var cs_inex = req.param('cs_inex','unknown')
-        var cs_ptcp_no = req.param('cs_ptcp_no','unknown')
+        var cs_ptcp_no = req.param('cs_ptcp_no','0')
 
-        var cs_amount_collected = req.param('cs_amount_collected','unknown')
+        var cs_amount_collected = req.param('cs_amount_collected','0')
 
-        var cs_organic = req.param('cs_organic','unknown')
-        var cs_recy = req.param('cs_recy','unknown')
-        var cs_non_recy = req.param('cs_non_recy','unknown')
+        var cs_organic = req.param('cs_organic','0')
+        var cs_recy = req.param('cs_recy','0')
+        var cs_non_recy = req.param('cs_non_recy','0')
         var cs_xs_shirt = req.param('cs_xs_shirt','0')
         var cs_s_shirt = req.param('cs_s_shirt','0')
         var cs_m_shirt = req.param('cs_m_shirt','0')

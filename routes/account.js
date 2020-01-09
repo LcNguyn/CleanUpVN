@@ -103,22 +103,17 @@ account.put('/:id' ,function (req, res) {
             return console.log(err)
         };
 
-
         var id = req.params.id
-        var acc_pass = req.param('acc_pass','unknown')
         var acc_username  =req.param('acc_username','unknown')
         var acc_description = req.param('acc_description','unknown')
 
-        bcrypt.genSalt(10, function(err, salt) {
-            bcrypt.hash(acc_pass, salt, function(err, hash) {
-                connection.query("UPDATE volunteer SET acc_pass = '" + hash + "', acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
-                    connection.release();
-                    if (error)
-                        return console.error(error.message);
-                    res.send('Update Row(s)');
-                });
-            });
-        })
+        connection.query("UPDATE volunteer SET acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
+            connection.release();
+            if (error)
+                return console.error(error.message);
+            res.send('Update Row(s)');
+        });
+
     });
 });
 
