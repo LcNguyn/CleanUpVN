@@ -107,7 +107,7 @@ account.put('/:id' ,function (req, res) {
         var acc_username  =req.param('acc_username','unknown')
         var acc_description = req.param('acc_description','unknown')
 
-        connection.query("UPDATE volunteer SET acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
+        connection.query("UPDATE users SET acc_username = '" + acc_username + "', acc_description = '" + acc_description + "' WHERE acc_id = '" + id + "'", (error, results, fields) => {
             connection.release();
             if (error)
                 return console.error(error.message);
